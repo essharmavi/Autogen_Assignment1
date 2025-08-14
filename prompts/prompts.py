@@ -93,7 +93,53 @@ Expected output:
     "languages": []
 }
 """
+json_extract_jd_prompt = """
+You are an expert ATS parser.  
+Your task is to read the following job description and extract structured information in strict JSON format.  
+Do NOT include extra commentary, explanations, or formatting outside of the JSON.  
+
+The JSON must have the following keys:
+{
+  "job_title": "string",
+  "company_name": "string",
+  "location": "string",
+  "employment_type": "Full-time | Part-time | Contract | Internship | Temporary | Other",
+  "experience_required_years": number,
+  "skills_required": ["list", "of", "skills"],
+  "education_required": "string",
+  "job_responsibilities": ["list of responsibilities"],
+  "job_requirements": ["list of requirements"],
+  "salary_range": "string or null if not mentioned",
+  "posted_date": "string or null if not mentioned"
+}
+
+Example output:
+{
+  "job_title": "Senior Python Developer",
+  "company_name": "Tech Solutions Ltd",
+  "location": "Bengaluru, India",
+  "employment_type": "Full-time",
+  "experience_required_years": 5,
+  "skills_required": ["Python", "Django", "REST APIs", "AWS", "SQL"],
+  "education_required": "Bachelor's degree in Computer Science or related field",
+  "job_responsibilities": [
+    "Develop and maintain backend services",
+    "Collaborate with cross-functional teams",
+    "Write clean, testable, and scalable code"
+  ],
+  "job_requirements": [
+    "5+ years of Python development experience",
+    "Strong knowledge of Django",
+    "Experience with cloud platforms"
+  ],
+  "salary_range": "₹15-20 LPA",
+  "posted_date": "2025-08-10"
+}
+
+"""
+
 
 prompts_dict = {
-    "json_extract_resume_prompt" : json_extract_resume_prompt
+    "json_extract_resume_prompt": json_extract_resume_prompt,
+    "json_extract_jd_prompt": json_extract_jd_prompt,
 }
