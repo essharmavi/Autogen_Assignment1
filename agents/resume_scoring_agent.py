@@ -1,23 +1,29 @@
 import os
 import sys
 import asyncio
+import hashlib
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from autogen_agentchat.agents import AssistantAgent
 from autogen_agentchat.ui import Console
 from chat_model.chat_model import get_model_client
 from prompts.prompts import prompts_dict
+from memory.memory_store import memory_store
 
 
-def extract_resume_to_json():
-    """Extract key data from resume text and return in JSON format."""
+def resume_scoring_agent():
+    
     model_client = get_model_client()
     agent = AssistantAgent(
-        name="extract_resume_to_json",
+        name="resume_scoring_agent",
         model_client=model_client,
-        description="Extract key data from resume text and convert to JSON format",
-        system_message=prompts_dict["json_extract_resume_prompt"],
+        description="Evaluate a given resume and score it.",
+        system_message=prompts_dict["resume_scoring_prompt"]
+        # ,memory= [memory_store]
     )
+
     # result = await agent.run(task=resume_text)
     # last_message = result.messages[-1].content
+
+
     return agent

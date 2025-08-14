@@ -4,11 +4,13 @@ import asyncio
 import streamlit as st
 import time
 
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tools.parse_documents import *
 from agents.resume_processing_agent import extract_resume_to_json
 from agents.jd_processing_agent import extract_jd_to_json
+from teams.resume_scoring_team import run_resume_team
 
 st.title("Resume Processing & ATS Scoring System")
 
@@ -40,9 +42,12 @@ async def process_documents():
                 st.error(f"Unsupported file type: {file_name}")
                 continue
 
-            parsed_resume_json = await extract_resume_to_json(text)
-            st.success(f"Extracted Resume JSON for {file_name}")
-            st.json(parsed_resume_json)
+            # parsed_resume_json = await extract_resume_to_json(text)
+            # st.success(f"Extracted Resume JSON for {file_name}")
+            # st.json(parsed_resume_json)
+            get_resume_score, resume_score_dict = await run_resume_team(text)
+            st.json(get_resume_score)
+            st.json(resume_score_dict)
 
         except Exception as e:
             st.error(f"Error processing {file_name}: {str(e)}")
@@ -59,9 +64,9 @@ async def process_documents():
             st.error(f"Unsupported file type: {file_name}")
             return
 
-        parsed_jd_json = await extract_jd_to_json(text)
-        st.success(f"Extracted JD JSON for {file_name}")
-        st.json(parsed_jd_json)
+        # parsed_jd_json = await extract_jd_to_json(text)
+        # st.success(f"Extracted JD JSON for {file_name}")
+        # st.json(parsed_jd_json)
 
     except Exception as e:
         st.error(f"Error while processing JD {file_name}: {str(e)}")
@@ -83,3 +88,6 @@ if uploaded_resume_files and uploaded_jobdescription_file:
     if st.button("Process"):
         with st.spinner("Getting parsed resumes and JD"):
             asyncio.run(process_documents())
+
+
+
