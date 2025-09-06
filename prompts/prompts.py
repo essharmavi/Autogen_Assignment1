@@ -47,6 +47,7 @@ Rules:
 - Do not include text outside the JSON.
 - If a field is missing in the resume, return an empty string or empty array.
 - Use correct JSON syntax with double quotes.
+- If you don't think it is a resume
 
 Example:
 Resume text:
@@ -138,45 +139,44 @@ Example output:
 
 """
 
+resume_summary = """
+    You are an ATS scoring assistant.
+    Based on the following resume JSON, generate a single detailed summary (~200 words)
+    that fully represents the candidate's background, education, technical expertise,
+    professional achievements, and soft skills.
 
-resume_scoring_prompt = """
-You are an ATS (Applicant Tracking System) Scoring Agent with persistent memory.
-You can access memory to recall how you scored past resumes.
+    Respond in JSON format:
+    {{
+      "summary": "200-word summary of the resume"
+    }}
+    """
 
-Your goals:
-1. Always maintain scoring consistency.
-   - If the exact same resume has been scored before, return the exact same score and feedback as stored in memory.
-   - If a similar resume appears, use prior scoring as a baseline to maintain consistency.
 
-2. Evaluate the resume without comparing to any job description. Judge only based on:
-   - Completeness (all standard resume sections present: contact info, summary, skills, experience, education, etc.)
-   - Clarity and readability.
-   - Formatting quality.
-   - Keyword richness and industry relevance.
+resume_scoring = """
+You are an ATS resume scoring assistant with memory.
 
-3. Output must include:
-   - **score**: integer between 0 and 100
-   - **feedback**: 3–5 constructive, actionable points to improve the resume
-   - **suggested_roles**: 3–5 realistic job roles aligned with skills and experience
-
-4. Return output strictly in this JSON format:
-{
-  "score": <integer>,
-  "feedback": "<string with bullet-like feedback points>",
-  "suggested_roles": ["role1", "role2", "role3", ...]
-}
-
-Rules:
-- Use memory to fetch past results for identical resumes instead of re-evaluating them.
-- If no prior score exists, score the resume and store it in memory for future reference.
-- Keep feedback concise but specific.
-- Do not output anything outside of the JSON object.
-
+- You have access to a vector memory of past resumes and their scores.
+- When a new resume comes:
+  1. Retrieve the most similar past resume summary from memory.
+  2. If similarity < 80%, score fresh.
+  3. If similarity is:
+     - 80–85% → Use the previous score ±5.
+     - 85–90% → Use the previous score ±3.
+     - 90–95% → Use the previous score ±2.
+     - ≥95% → Return the exact same score.
+- Always store the new resume summary and the final score in memory for future use.
+- Ensure consistency: the same resume always returns the same score.
+- Your output must always be valid JSON with keys:
+  {
+    "score": <0–100>,
+    "feedback": "<improvements>",
+    "suggested_roles": [list of roles]
+  }
 """
-
 
 prompts_dict = {
     "json_extract_resume_prompt": json_extract_resume_prompt,
     "json_extract_jd_prompt": json_extract_jd_prompt,
-    "resume_scoring_prompt": resume_scoring_prompt
+    "resume_summary": resume_summary,
+    "resume_scoring": resume_scoring
 }

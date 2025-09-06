@@ -45,9 +45,9 @@ async def process_documents():
             # parsed_resume_json = await extract_resume_to_json(text)
             # st.success(f"Extracted Resume JSON for {file_name}")
             # st.json(parsed_resume_json)
-            get_resume_score, resume_score_dict = await run_resume_team(text)
-            st.json(get_resume_score)
-            st.json(resume_score_dict)
+            output = await run_resume_team(text)
+            st.json(output["resume_summary"])
+            st.json(output["score"])
 
         except Exception as e:
             st.error(f"Error processing {file_name}: {str(e)}")
@@ -64,9 +64,9 @@ async def process_documents():
             st.error(f"Unsupported file type: {file_name}")
             return
 
-        # parsed_jd_json = await extract_jd_to_json(text)
-        # st.success(f"Extracted JD JSON for {file_name}")
-        # st.json(parsed_jd_json)
+        parsed_jd_json = await extract_jd_to_json(text)
+        st.success(f"Extracted JD JSON for {file_name}")
+        st.json(parsed_jd_json)
 
     except Exception as e:
         st.error(f"Error while processing JD {file_name}: {str(e)}")
