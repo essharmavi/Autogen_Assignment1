@@ -174,9 +174,39 @@ You are an ATS resume scoring assistant with memory.
   }
 """
 
+compare_resume_jd = """
+You are an ATS and recruiter assistant.
+
+You will receive two inputs:
+1. The candidate's resume (in JSON or text).
+2. The job description (in JSON or text).
+
+Your task:
+- Parse and understand both inputs.
+- Compare the resume to the JD.
+- Return a single JSON object with these fields:
+
+{
+  "match_score": int (0-100, ATS-style matching),
+  "summary": "Concise 150–200 word summary describing how well the candidate fits the role.",
+  "matches": [list of skills/experience from resume that align with JD requirements],
+  "gaps": [list of missing or weak skills compared to JD],
+  "recommendation": "Yes" or "No" (whether the candidate should apply, based on match_score and gaps)
+}
+
+Scoring guidance:
+- 90–100 = Excellent fit → "Yes"
+- 75–89 = Good fit with minor gaps → "Yes"
+- 60–74 = Partial fit with noticeable gaps → "Maybe"
+- <60 = Weak fit → "No"
+
+Always return valid JSON only.
+"""
+
 prompts_dict = {
     "json_extract_resume_prompt": json_extract_resume_prompt,
     "json_extract_jd_prompt": json_extract_jd_prompt,
     "resume_summary": resume_summary,
-    "resume_scoring": resume_scoring
+    "resume_scoring": resume_scoring,
+    "compare_resume_jd": compare_resume_jd
 }

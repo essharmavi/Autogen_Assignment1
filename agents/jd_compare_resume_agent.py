@@ -1,6 +1,6 @@
 import os
 import sys
-import asyncio
+import json
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from autogen_agentchat.agents import AssistantAgent
@@ -8,13 +8,14 @@ from autogen_agentchat.ui import Console
 from chat_model.chat_model import get_model_client
 from prompts.prompts import prompts_dict
 
-def extract_jd_to_json() :
-    """Extract key data from resume text and return in JSON format."""
+
+def compare_jd_resume_agent() :
+    """Compare resume and JD."""
     model_client = get_model_client()
     agent = AssistantAgent(
-        name="extract_jd_to_json",
+        name="compare_jd_resume_agent",
         model_client=model_client,
-        description="Extract key data from Job description(jd) text and convert to JSON format",
-        system_message=prompts_dict["json_extract_jd_prompt"],
+        description="Compare resume and JD",
+        system_message=prompts_dict["compare_resume_jd"],
     )
     return agent
